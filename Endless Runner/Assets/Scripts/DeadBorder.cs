@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts;
-public class DeadBorder : MonoBehaviour {
+
+public class DeadBorder : MonoBehaviour
+{
     //Kills Player on Contact
     void OnTriggerEnter(Collider col)
     {
@@ -11,8 +13,6 @@ public class DeadBorder : MonoBehaviour {
         {
             //Call Death Function to end Game
             GameManager.getManager().Die();
-        
         }
     }
-    
 }

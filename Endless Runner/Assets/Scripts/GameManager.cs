@@ -2,31 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts;
-public class GameManager : MonoBehaviour {
+
+public class GameManager : MonoBehaviour
+{
     //Initializations
     //Single game manager
     public static GameManager instance;
+
     //Current game state
     private State state;
+
     //Can Tiger Turn?
-    public bool canSwipe=false;
+    public bool canSwipe = false;
+
     //Can player Turn?
-    public bool canTurn=false;
+    public bool canTurn = false;
     private GameObject player;
     private bool activePlayer;
+
     //Storing Direction to help tiger and autorunning features
     private Queue<turnDirection> direction;
-    //Enum to define 
+
+    //Enum to define
     public enum turnDirection
     {
-        Left,Right,Straight
-        
+        Left,
+        Right,
+        Straight
     };
+
     //public GameState state;
     // Use this for initialization
-    public void Awake ()
+    public void Awake()
     {
-        
         if (instance == null)
         {
             setManager(this);
@@ -47,14 +55,14 @@ public class GameManager : MonoBehaviour {
         //Debug.Log("Maanger Created");
 
     }
-	
-	// Death 
-	public void Die()
+
+    // Death
+    public void Die()
     {
-        
         setState(State.Dead);
         setSwipe(false);
-	}
+    }
+
     /* Game State*/
     //Getters
     public State getState()
@@ -67,28 +75,33 @@ public class GameManager : MonoBehaviour {
     {
         state = s;
     }
+
     /*Can Swipe*/
     //Get
     public bool getCanSwipe()
     {
         return canSwipe;
     }
+
     //Set
     public void setSwipe(bool swipe)
     {
         canSwipe = swipe;
     }
+
     /*Can Player Turn */
     //Get
     public bool getCanTurn()
     {
         return canTurn;
     }
+
     //Set
     public void setTurn(bool turn)
     {
         canTurn = turn;
     }
+
     /*Manager*/
     //Get
     public static GameManager getManager()
@@ -98,28 +111,31 @@ public class GameManager : MonoBehaviour {
 
         return instance;
     }
+
     //Set
     public void setManager(GameManager manager)
     {
         if (manager == null)
         {
             instance = new GameManager();
-           
         }
         else
             instance = this;
         instance.setSwipe(false);
         instance.state = State.Start;
     }
+
     protected GameManager()
     {
         setState(State.Start);
         setSwipe(false);
     }
+
     public void setDirection(Queue<turnDirection> s)
     {
         direction = s;
     }
+
     public Queue<turnDirection> getDirection()
     {
         return direction;

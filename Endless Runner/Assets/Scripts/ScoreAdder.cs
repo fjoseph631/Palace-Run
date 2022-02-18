@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 //Adds bonus to score
-public class ScoreAdder : MonoBehaviour {
+public class ScoreAdder : MonoBehaviour
+{
     //Bonus given to player
-    public int Bonus=200;
+    public int Bonus = 200;
+
     //Rotation speed
     public float rotateSpeed = 50f;
 
@@ -13,6 +16,7 @@ public class ScoreAdder : MonoBehaviour {
     {
         transform.Rotate(Vector3.up, Time.deltaTime * rotateSpeed);
     }
+
     void OnTriggerEnter(Collider col)
     {
         //Add bounus to player's score

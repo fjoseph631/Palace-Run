@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GetRandomMaterial : MonoBehaviour {
-
+public class GetRandomMaterial : MonoBehaviour
+{
     // Use this for initialization
     void Awake()
     {
@@ -16,10 +16,10 @@ public class GetRandomMaterial : MonoBehaviour {
     {
         //Choose wall material
         int x = Random.Range(0, 2);
-        
+
         if (x == 0)
         {
-            //Tile 1            
+            //Tile 1
             if (Resources.Load("Materials/Tile 1") as Material != null)
             {
                 return Resources.Load("Materials/Tile 1") as Material;
@@ -45,6 +45,4 @@ public class GetRandomMaterial : MonoBehaviour {
         }
         return null as Material;
     }
-
 }
-
