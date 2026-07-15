@@ -15,7 +15,7 @@ public class GetRandomMaterial : MonoBehaviour
     public Material GetMaterial()
     {
         //Choose wall material
-        int x = Random.Range(0, 2);
+        int x = Random.Range(0, 3);
 
         if (x == 0)
         {

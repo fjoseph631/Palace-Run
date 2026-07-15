@@ -25,80 +25,62 @@ public class FloorSpawner : MonoBehaviour
 
     void OnTriggerEnter(Collider hit)
     {
-        //player has hit the collider
         if (hit.gameObject.tag == Constants.PlayerTag)
         {
             Transform spawn;
 
-            //find whether the next path will be straight, left or right
             int pathChoice = Random.Range(0, PathSpawnPoints.Length);
             var path = PathSpawnPoints[pathChoice];
-            //Get offset between new path and old path
-            int offset =
-                (int)previousPath.transform.rotation.eulerAngles.y
-                - (int)path.transform.rotation.eulerAngles.y;
-            //Reduce offset to acceptable range
-            while (offset > 360)
+            float offset = Mathf.DeltaAngle(
+                previousPath.transform.rotation.eulerAngles.y,
+                path.transform.rotation.eulerAngles.y
+            );
+
+            if (Mathf.Approximately(offset, 0f))
             {
-                offset -= 360;
-            }
-            //Straight
-            if (offset == 0)
-            {
-                //Debug.Log("Trigger Hit");
-                //Create Path
-                Instantiate(Paths[1], path.transform.position, (path.transform.rotation));
-                //Add to queue
+                Instantiate(Paths[1], path.transform.position, path.transform.rotation);
                 GameManager
                     .getManager()
                     .getDirection()
                     .Enqueue(GameManager.turnDirection.Straight);
+                Destroy(this);
                 return;
             }
 
-            //Generate obsticle point and obsticle
             int obsticleSpawn = Random.Range(0, ObsticleSpawnPoints.Length);
             spawn = ObsticleSpawnPoints[obsticleSpawn];
             int element = Random.Range(0, Obsticles.Length);
-            Instantiate(Obsticles[element], spawn.transform.position, (spawn.transform.rotation));
-            //Generate Power Ups
+            Instantiate(Obsticles[element], spawn.transform.position, spawn.transform.rotation);
             int powerSpawn = Random.Range(0, PowerSpawnPoints.Length);
             spawn = PowerSpawnPoints[powerSpawn];
             element = Random.Range(0, PowerUps.Length);
-            Instantiate(PowerUps[element], spawn.transform.position, (spawn.transform.rotation));
-            Instantiate(spawn, spawn.transform.position, (spawn.transform.rotation));
+            Instantiate(PowerUps[element], spawn.transform.position, spawn.transform.rotation);
 
-            //Create Path
-            Instantiate(Paths[0], path.transform.position, (path.transform.rotation));
+            Instantiate(Paths[0], path.transform.position, path.transform.rotation);
 
-            //Generate left border for right turn
-            if ((int)offset == -90 || (int)offset == 270)
+            if (Mathf.Approximately(offset, -90f))
             {
-                //Get border and placement
                 var border = DangerousBorders[1];
                 spawn = BorderSpawnPoints[1];
-                //Create border
                 Instantiate(border, spawn.position, spawn.rotation);
-                //Add to queue
                 GameManager.getManager().getDirection().Enqueue(GameManager.turnDirection.Right);
-                // Destroy Object
                 Destroy(this);
                 return;
             }
-            //Generate right border for left turn
-            if (offset == 90 || offset == -270)
+
+            if (Mathf.Approximately(offset, 90f))
             {
-                //Get border
                 var border = DangerousBorders[0];
                 spawn = BorderSpawnPoints[0];
-                //Create border
                 Instantiate(border, spawn.position, spawn.rotation);
-                //Add to direction queue
                 GameManager.getManager().getDirection().Enqueue(GameManager.turnDirection.Left);
-                //Destroy Object
                 Destroy(this);
                 return;
             }
+
+            Debug.LogWarning("FloorSpawner: unhandled path offset " + offset);
+            GameManager.getManager().getDirection().Enqueue(GameManager.turnDirection.Straight);
+            Destroy(this);
         }
     }
 }

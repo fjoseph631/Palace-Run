@@ -13,6 +13,7 @@ public class Obsticle : MonoBehaviour
             if (CharacterInput.autorun)
             {
                 Destroy(this);
+                return;
             }
             GameManager.getManager().Die();
         }

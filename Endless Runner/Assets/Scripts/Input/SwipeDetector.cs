@@ -51,12 +51,13 @@ public class SwipeDetector : MonoBehaviour,IInputDetector {
                     if (angle <= 225 && angle >= 135)
                         return InputDirection.Left;
                     if (angle <= 135 && angle >= 45)
-                        return InputDirection.Left;
+                        return InputDirection.Top;
                     else
                         return InputDirection.Bottom;
                 }
                 else
                 {
+                    state = State.swipeNotStarted;
                     return null;
                 }
             }

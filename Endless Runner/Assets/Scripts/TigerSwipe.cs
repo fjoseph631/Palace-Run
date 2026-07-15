@@ -15,8 +15,6 @@ public class TigerSwipe : MonoBehaviour
                 if (swipe.tag == Constants.Tiger)
                 {
                     GameManager.getManager().setSwipe(true);
-                    //Debug.Log("Tiger Can Turn "+ GameManager.getManager().getDirection().Peek());
-
                 }
             }
         }
@@ -24,21 +22,14 @@ public class TigerSwipe : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        GameManager.turnDirection a;
-        //Prevent multiple turns
-        if (other.tag == Constants.Tiger)
+        if (other.tag == Constants.Tiger && GameManager.getManager().getDirection().Count > 0)
         {
-            //Removing oldest queue element and storing whats left
-            //GameManager.getManager().setDirection(GameManager.getManager().getDirection().Dequeue());
-            if (GameManager.getManager().getDirection().Count > 0)
-            {
-                //Tiger has turned - so set swipe to no and dequeue fro head
+            var peek = GameManager.getManager().getDirection().Peek();
+            if (peek != GameManager.turnDirection.Straight && !GameManager.getManager().getCanSwipe())
+                GameManager.getManager().getDirection().Dequeue();
+            else
                 GameManager.getManager().setSwipe(false);
-                a = (GameManager.getManager().getDirection().Dequeue());
-                //Object is no longer useful
-
-            }
-            Destroy(this.transform.root.gameObject, 5);
+            Destroy(transform.root.gameObject, 5);
         }
     }
 }

@@ -55,6 +55,7 @@ public class AutoRun : MonoBehaviour
 
     private void OnTriggerExit(Collider swipe)
     {
-        Destroy(this);
+        if (swipe.tag == Constants.PlayerTag)
+            Destroy(this);
     }
 }

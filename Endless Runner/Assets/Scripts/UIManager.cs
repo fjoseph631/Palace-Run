@@ -26,11 +26,10 @@ public class UIManager : MonoBehaviour
     private static UIManager instance;
     public static UIManager Instance
     {
-        //UIManager Getter
         get
         {
             if (instance == null)
-                instance = new UIManager();
+                instance = FindObjectOfType<UIManager>();
 
             return instance;
         }

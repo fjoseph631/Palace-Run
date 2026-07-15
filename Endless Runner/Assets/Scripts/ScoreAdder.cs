@@ -19,7 +19,9 @@ public class ScoreAdder : MonoBehaviour
 
     void OnTriggerEnter(Collider col)
     {
-        //Add bounus to player's score
+        if (col.gameObject.tag != Constants.PlayerTag)
+            return;
+
         UIManager.Instance.IncreaseScore(Bonus);
         Destroy(this.gameObject);
         UIManager.Instance.SetStatus(Constants.Bonus);

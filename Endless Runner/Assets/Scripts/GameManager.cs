@@ -49,7 +49,8 @@ public class GameManager : MonoBehaviour
         setSwipe(false);
         //Get player avatar
         player = GameObject.FindGameObjectWithTag("Player");
-        player.SetActive(true);
+        if (player != null)
+            player.SetActive(true);
         setDirection(new Queue<turnDirection>());
         direction.Enqueue(turnDirection.Straight);
         //Debug.Log("Maanger Created");
@@ -107,7 +108,7 @@ public class GameManager : MonoBehaviour
     public static GameManager getManager()
     {
         if (instance == null)
-            instance = new GameManager();
+            instance = FindObjectOfType<GameManager>();
 
         return instance;
     }
@@ -116,11 +117,13 @@ public class GameManager : MonoBehaviour
     public void setManager(GameManager manager)
     {
         if (manager == null)
-        {
-            instance = new GameManager();
-        }
+            instance = FindObjectOfType<GameManager>();
         else
-            instance = this;
+            instance = manager;
+
+        if (instance == null)
+            return;
+
         instance.setSwipe(false);
         instance.state = State.Start;
     }

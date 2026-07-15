@@ -36,6 +36,7 @@ public class CharacterInput : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        autorun = false;
         speed = initSpeed;
         duration = autoDuration;
         //Establish player movement direction
@@ -59,7 +60,7 @@ public class CharacterInput : MonoBehaviour
         anim.SetBool(Constants.ParamDoubleJump, false);
         anim.SetBool(Constants.ParamDead, false);
 
-        CharacterGO.position.Set(0, 0, 0);
+        CharacterGO.position = Vector3.zero;
     }
 
     //Getter of animator component
@@ -85,71 +86,69 @@ public class CharacterInput : MonoBehaviour
         switch (GameManager.getManager().getState())
         {
             case State.Start:
-            {
-                //Player's started play
-                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    moveDirection = transform.forward;
-                    moveDirection = transform.TransformDirection(moveDirection);
-                    moveDirection *= speed;
-                    //Change Player State
-                    GameManager.getManager().setState(State.Playing);
-                    //Initialize UI Status
-                    UIManager.Instance.SetStatus(string.Empty);
-                    //Update animator parameters
-                    anim.SetBool(Constants.ParamStarted, true);
-                    anim.SetBool(Constants.ParamDoubleJump, false);
-                    anim.SetBool(Constants.ParamJump, false);
-                    //Reset Max
-                    CharacterGO.transform.position.Set(0f, 0f, 4f);
+                    //Player's started play
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        moveDirection = transform.forward;
+                        moveDirection = transform.TransformDirection(moveDirection);
+                        moveDirection *= speed;
+                        //Change Player State
+                        GameManager.getManager().setState(State.Playing);
+                        //Initialize UI Status
+                        UIManager.Instance.SetStatus(string.Empty);
+                        //Update animator parameters
+                        anim.SetBool(Constants.ParamStarted, true);
+                        anim.SetBool(Constants.ParamDoubleJump, false);
+                        anim.SetBool(Constants.ParamJump, false);
+                        //Reset Max
+                        CharacterGO.transform.position = new Vector3(0f, 0f, 4f);
+                    }
+                    break;
                 }
-                break;
-            }
             case State.Playing:
-            {
-                //Ground Check
-                anim.SetBool(Constants.ParamGrounded, controller.isGrounded);
-                if (CharacterGO.transform.position.y < .25f)
                 {
-                    anim.SetBool(Constants.ParamGrounded, true);
-                }
-                //Increase Score
-                UIManager.Instance.IncreaseScore(0 + Time.deltaTime);
-                //Increase Speed
-                speed += (Time.deltaTime * 3);
+                    //Ground Check
+                    anim.SetBool(Constants.ParamGrounded, controller.isGrounded);
+                    if (CharacterGO.transform.position.y < .25f)
+                    {
+                        anim.SetBool(Constants.ParamGrounded, true);
+                    }
+                    //Increase Score
+                    UIManager.Instance.IncreaseScore(0 + Time.deltaTime);
+                    //Increase Speed
+                    speed += (Time.deltaTime * 3);
 
-                CheckHeight();
-                Detector();
-                //Apply Gravity
-                moveDirection.y -= gravity * Time.deltaTime;
-                //Actual move of character
-                controller.Move(moveDirection * Time.deltaTime);
-                break;
-            }
-            //Will be implemented later
-            case State.Stumbled:
-            {
-                break;
-            }
-            case State.Dead:
-            {
-                //Player's Dead - Update UI and animator
-                anim.SetBool(Constants.ParamDead, true);
-                anim.SetBool(Constants.ParamStarted, false);
-                UIManager.Instance.SetStatus(Constants.StatusDead);
-                //Player wants to restart
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    //restart
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                    GameManager.getManager().Awake();
+                    CheckHeight();
+                    Detector();
+                    //Apply Gravity
+                    moveDirection.y -= gravity * Time.deltaTime;
+                    //Actual move of character
+                    controller.Move(moveDirection * Time.deltaTime);
+                    break;
                 }
-                break;
-            }
+            //Will be implemented later
+            // case State.Stumbled:
+            // {
+            //     goto case State.Playing;
+            // }
+            case State.Dead:
+                {
+                    //Player's Dead - Update UI and animator
+                    anim.SetBool(Constants.ParamDead, true);
+                    anim.SetBool(Constants.ParamStarted, false);
+                    UIManager.Instance.SetStatus(Constants.StatusDead);
+                    //Player wants to restart
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                    }
+                    break;
+                }
             default:
-            {
-                break;
-            }
+                {
+                    break;
+                }
         }
     }
 
@@ -179,11 +178,9 @@ public class CharacterInput : MonoBehaviour
         )
         {
             anim.SetBool(Constants.ParamDoubleJump, false);
-
             moveDirection.y = jumpSpeed * 4;
-            Debug.Break();
         }
-        else
+        else if (controller.isGrounded)
         {
             anim.SetBool(Constants.ParamDoubleJump, true);
             anim.SetBool(Constants.ParamJump, true);
@@ -205,16 +202,20 @@ public class CharacterInput : MonoBehaviour
                 //allow the user to swipe once per swipe location
 
                 GameManager.getManager().setTurn(false);
+                anim.SetBool(Constants.ParamTurning, false);
             }
             //Left Turn
             else if (inputDirection.HasValue && inputDirection == InputDirection.Left)
             {
-                //Turn Both Player and camera and update moveDirection
-                //transform.Rotate(0, -90, 0);
+                if (controller.isGrounded)
+                {
+                    anim.SetBool(Constants.ParamTurning, true);
+                    anim.SetFloat(Constants.ParamTurnDirection, -1.0f);
+                }
                 CameraController.rotation.y -= 90;
                 moveDirection = Quaternion.AngleAxis(-90, Vector3.up) * moveDirection;
-                //Allow only one swipe per trigger
                 GameManager.getManager().setTurn(false);
+                anim.SetBool(Constants.ParamTurning, false);
             }
         }
     }

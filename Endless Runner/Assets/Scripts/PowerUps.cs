@@ -9,28 +9,23 @@ public class PowerUps : MonoBehaviour
     {
         if (col.tag == Constants.PlayerTag)
         {
-            //Update Status
             CharacterInput.autorun = true;
-            Debug.Log(Constants.Autorun);
             UIManager.Instance.SetStatus(Constants.Autorun);
-            //Call Time
             StartCoroutine(autorunTimer());
         }
-        UIManager.Instance.SetStatus(Constants.AutorunCease);
-        Destroy(this);
     }
 
     IEnumerator autorunTimer()
     {
         float timePassed = 0;
-        //Remained autorunning for given duration using coroutine
         while (timePassed < CharacterInput.duration)
         {
             UIManager.Instance.SetStatus(Constants.AutorunContinue);
             timePassed += Time.deltaTime;
-            yield return new WaitForSeconds(CharacterInput.duration);
-            Debug.Log(timePassed - CharacterInput.duration);
+            yield return null;
         }
         CharacterInput.autorun = false;
+        UIManager.Instance.SetStatus(Constants.AutorunCease);
+        Destroy(gameObject);
     }
 }

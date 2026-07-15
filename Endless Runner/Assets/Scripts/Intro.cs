@@ -7,7 +7,11 @@ public class Intro : MonoBehaviour
 {
     public void LevelClick(string level)
     {
-        //Loading In Scene on Click
         SceneManager.LoadScene(level);
+    }
+
+    public void RotatedLevelClick()
+    {
+        LevelClick("S1");
     }
 }

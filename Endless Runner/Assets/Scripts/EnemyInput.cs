@@ -24,7 +24,7 @@ public class EnemyInput : MonoBehaviour
         moveDirection = transform.forward;
         anim.SetBool(Constants.ParamStart, false);
         //moveDirection = transform.TransformDirection(moveDirection);
-        transform.position.Set(0f, 0f, -5f);
+        transform.position = new Vector3(0f, 0f, -5f);
         transform.Translate(moveDirection, Space.Self);
         //CharacterGO.position.Set(0,0,0);
         moveDirection *= speed;
@@ -47,16 +47,20 @@ public class EnemyInput : MonoBehaviour
         if (GameManager.getManager().getState() == State.Playing)
         {
             //Look at its prey
-            Quaternion.Slerp(
-                this.transform.rotation,
-                Quaternion.LookRotation(player.transform.position, this.transform.position),
-                3 * Time.deltaTime
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                Quaternion.LookRotation(
+                    player.transform.position - transform.position,
+                    Vector3.up
+                ),
+                3f * Time.deltaTime
             );
             // //Play sound if too close
             // if(Vector3.Distance(player.transform.po)
             // {
 
             // }
+            moveDirection.y -= gravity * Time.deltaTime;
             detector();
             //Actual Movement of character
             controller.Move(moveDirection * Time.deltaTime);
@@ -101,9 +105,6 @@ public class EnemyInput : MonoBehaviour
     void OnControllerColliderHit(ControllerColliderHit collision)
     {
         //Get colliders from objects tagged GameController & obsticle
-
-        GameObject obsticle = GameObject.FindWithTag(Constants.Obsticle);
-        GameObject tiger = GameObject.FindWithTag(Constants.Tiger);
         //Destroys obsticles as needed
         if (collision.gameObject.tag == Constants.Obsticle)
         {
